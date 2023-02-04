@@ -1,8 +1,35 @@
+---
+title: 'Programming Assignment 2: Lexical Scoping'
+author: "Julian Posada"
+date: "2023-02-04"
+output: html_document
+---
 
-## this function is used By a function  called cacheSolve to create a cache 
-#of a matrix. 
-#It returns a list
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Science Specialization
+### Course 2: Programming in R
+#### Programming Assignment 2: Lexical Scoping
+
+Write the following functions:
+
+makeCacheMatrix: This function creates a special "matrix" object that can cache its inverse.
+
+cacheSolve: This function computes the inverse of the special "matrix" returned by makeCacheMatrix above. If the inverse has already been calculated (and the matrix has not changed), then the cachesolve should retrieve the inverse from the cache.
+
+Computing the inverse of a square matrix can be done with the solve function in R. For example, if X is a square invertible matrix, then solve(X) returns its inverse.
+
+```{r}
+source("cachematrix.R")
+```
+
+makeCacheMatrix: This function creates a special "matrix" object that can cache its inverse.
+
+```{r}
 makeCacheMatrix <- function(x = matrix()) # a matrix gets into variable x
 {
         InverseCache <- NULL 
@@ -19,10 +46,11 @@ makeCacheMatrix <- function(x = matrix()) # a matrix gets into variable x
              set_inverse = set_inverse,
              get_inverse = get_inverse)# creates the Cache 
 }
+```
 
+cacheSolve: This function computes the inverse of the special "matrix" returned by makeCacheMatrix above. If the inverse has already been calculated (and the matrix has not changed), then the cachesolve should retrieve the inverse from the cache.
 
-## this function uses solve() to create the inverse matrix
-
+```{r}
 cacheSolve <- function(x) # it receives a matrix created with makeCacheMatrix()
 {
         ## Return a matrix that is the inverse of 'x'
@@ -39,7 +67,13 @@ cacheSolve <- function(x) # it receives a matrix created with makeCacheMatrix()
         x$set_inverse(m)
         m #Returns the inverse
 }
+```
 
+### Testing the results
+#### function createMatrix creates a matrix.
+code source: https://www.geeksforgeeks.org/inverse-of-matrix-in-r/
+
+```{r}
 createMatrix<- function()
 {
         # R program to find inverse of a Matrix, 
@@ -57,6 +91,22 @@ createMatrix<- function()
         A <- rbind(a1, a2, a3)
 }
 
+```
 
+### creating a testcase
 
+```{r}
+mat<- createMatrix()
+test<- makeCacheMatrix(mat)
+```
+### using cacheSolve() for the first time.  NO cache expected
+
+```{r}
+cacheSolve(test)
+```
+### using cacheSolve() with the same data. Expecting data from cache
+
+```{r}
+cacheSolve(test)
+```
 
