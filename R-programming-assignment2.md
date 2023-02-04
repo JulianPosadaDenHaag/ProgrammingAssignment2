@@ -1,0 +1,137 @@
+Programming Assignment 2: Lexical Scoping
+================
+Julian Posada
+2023-02-04
+
+## Data Science Specialization
+
+### Course 2: Programming in R
+
+#### Programming Assignment 2: Lexical Scoping
+
+Write the following functions:
+
+makeCacheMatrix: This function creates a special “matrix” object that
+can cache its inverse.
+
+cacheSolve: This function computes the inverse of the special “matrix”
+returned by makeCacheMatrix above. If the inverse has already been
+calculated (and the matrix has not changed), then the cachesolve should
+retrieve the inverse from the cache.
+
+Computing the inverse of a square matrix can be done with the solve
+function in R. For example, if X is a square invertible matrix, then
+solve(X) returns its inverse.
+
+``` r
+source("cachematrix.R")
+```
+
+makeCacheMatrix: This function creates a special “matrix” object that
+can cache its inverse.
+
+``` r
+makeCacheMatrix <- function(x = matrix()) # a matrix gets into variable x
+{
+        InverseCache <- NULL 
+        set <- function(y) {    # the set function passes a matrix into x
+                x <<- y 
+                InverseCache <<- NULL # not inverse matrix yet
+        } 
+        get <- function() x # gets the source matrix
+        set_inverse <- function(solve) InverseCache<<- solve # this function
+        # receive the inverse of a matrix from another function and stores it 
+        #as InverseCache
+        get_inverse <- function() InverseCache # returns the cached inverse matrix
+        list(set = set, get = get,
+             set_inverse = set_inverse,
+             get_inverse = get_inverse)# creates the Cache 
+}
+```
+
+cacheSolve: This function computes the inverse of the special “matrix”
+returned by makeCacheMatrix above. If the inverse has already been
+calculated (and the matrix has not changed), then the cachesolve should
+retrieve the inverse from the cache.
+
+``` r
+cacheSolve <- function(x) # it receives a matrix created with makeCacheMatrix()
+{
+        ## Return a matrix that is the inverse of 'x'
+        m <- x$get_inverse()# if the inverse in cached, returns the cached inverse
+        if(!is.null(m)) 
+        {
+                message("getting cached data")
+                return(m)
+        }
+        message("creating new cache with the matrix:")
+        data <- x$get()# if not, it creates the inverse matrix and stores it 
+        print(data)# in the cache
+        m <- solve(data)
+        x$set_inverse(m)
+        m #Returns the inverse
+}
+```
+
+### Testing the results
+
+#### function createMatrix creates a matrix.
+
+code source: <https://www.geeksforgeeks.org/inverse-of-matrix-in-r/>
+
+``` r
+createMatrix<- function()
+{
+        # R program to find inverse of a Matrix, 
+        #source https://www.geeksforgeeks.org/inverse-of-matrix-in-r/
+        
+        # Create 3 different vectors
+        # using combine method.
+        a1 <- c(3, 2, 5)
+        a2 <- c(2, 3, 2)
+        a3 <- c(5, 2, 4)
+        
+        # bind the three vectors into a matrix 
+        # using rbind() which is basically
+        # row-wise binding.
+        A <- rbind(a1, a2, a3)
+}
+```
+
+### creating a testcase
+
+``` r
+mat<- createMatrix()
+test<- makeCacheMatrix(mat)
+```
+
+### using cacheSolve() for the first time. NO cache expected
+
+``` r
+cacheSolve(test)
+```
+
+    ## creating new cache with the matrix:
+
+    ##    [,1] [,2] [,3]
+    ## a1    3    2    5
+    ## a2    2    3    2
+    ## a3    5    2    4
+
+    ##               a1          a2         a3
+    ## [1,] -0.29629630 -0.07407407  0.4074074
+    ## [2,] -0.07407407  0.48148148 -0.1481481
+    ## [3,]  0.40740741 -0.14814815 -0.1851852
+
+### using cacheSolve() with the same data. Expecting data from cache
+
+``` r
+cacheSolve(test)
+```
+
+    ## getting cached data
+
+    ##               a1          a2         a3
+    ## [1,] -0.29629630 -0.07407407  0.4074074
+    ## [2,] -0.07407407  0.48148148 -0.1481481
+    ## [3,]  0.40740741 -0.14814815 -0.1851852
